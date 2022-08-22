@@ -11,12 +11,20 @@ const Button = ({ feedbackChange, name}) => {
 }
 
 const Statistics = (props) => {
+  if(props.allFeedback.length === 0) {
+    return (
+      <div>
+        No feedback given
+      </div>
+    )
+  } 
   return (
     <div>
       {props.statName} {props.stat} {props.char}
     </div>
   )
 }
+
 
 const App = () => {
   // save clicks of each button to its own state
@@ -57,12 +65,13 @@ const App = () => {
         </div>
         <div>
           <h2>Statistics</h2>
-            <Statistics statName ='Good' stat={good} char=''/>
-            <Statistics statName ='Neutral' stat={neutral} char='' />
-            <Statistics statName ='Bad' stat={bad} char='' />
-            <Statistics statName ='All' stat={feedbackTotal} char='' />
-            <Statistics statName ='Average' stat={feedbackAverage} char='' />
-            <Statistics statName ='Positive' stat={positivePercentage} char='%' />
+            <Statistics allFeedback={allFeedback} statName='Good' stat={good} char=''/>
+            <Statistics allFeedback={allFeedback} statName='Neutral' stat={neutral} char=''/>
+            <Statistics allFeedback={allFeedback} statName='Bad' stat={bad} char=''/>
+            <Statistics allFeedback={allFeedback} statName='All' stat={allFeedback} char=''/>
+            <Statistics allFeedback={allFeedback} statName='Average' stat={feedbackAverage} char=''/>
+            <Statistics allFeedback={allFeedback} statName='Positive' stat={positivePercentage} char='%'/>
+            
         </div>
     </div>
   )
