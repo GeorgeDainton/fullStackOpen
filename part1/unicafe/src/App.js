@@ -10,8 +10,12 @@ const Button = ({ feedbackChange, name}) => {
   )
 }
 
-const Average = () => {
-
+const Statistics = (props) => {
+  return (
+    <div>
+      {props.statName} {props.stat} {props.char}
+    </div>
+  )
 }
 
 const App = () => {
@@ -45,18 +49,20 @@ const App = () => {
 
   return (
     <div>
-      <h2>Give Feedback</h2>
-        <Button feedbackChange={goodClick} name='good'/>
-        <Button feedbackChange={neutralClick} name='neutral'/>
-        <Button feedbackChange={badClick} name='bad'/>
-      <h2>Statistics</h2>
         <div>
-          Good {good} <br></br>
-          Neutral {neutral} <br></br>
-          Bad {bad} <br></br>
-          All {feedbackTotal} <br></br>
-          Average {feedbackAverage} <br></br>
-          Positive {positivePercentage}%
+          <h2>Give Feedback</h2>
+            <Button feedbackChange={goodClick} name='good'/>
+            <Button feedbackChange={neutralClick} name='neutral'/>
+            <Button feedbackChange={badClick} name='bad'/>
+        </div>
+        <div>
+          <h2>Statistics</h2>
+            <Statistics statName ='Good' stat={good} char=''/>
+            <Statistics statName ='Neutral' stat={neutral} char='' />
+            <Statistics statName ='Bad' stat={bad} char='' />
+            <Statistics statName ='All' stat={feedbackTotal} char='' />
+            <Statistics statName ='Average' stat={feedbackAverage} char='' />
+            <Statistics statName ='Positive' stat={positivePercentage} char='%' />
         </div>
     </div>
   )
