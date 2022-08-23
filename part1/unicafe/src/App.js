@@ -10,8 +10,16 @@ const Button = ({ feedbackChange, name}) => {
   )
 }
 
+const StatisticLine = (props) => {
+  return (
+    <div>
+      {props.statName} {props.stat}
+    </div>
+  )
+}
+
 const Statistics = (props) => {
-  if(props.allFeedback.length === 0) {
+  if(props.feedbackGiven === false) {
     return (
       <div>
         No feedback given
@@ -20,11 +28,16 @@ const Statistics = (props) => {
   } 
   return (
     <div>
-      {props.statName} {props.stat} {props.char}
+      <StatisticLine statName='Good' stat={props.good} />
+      <StatisticLine statName='Neutral' stat={props.neutral} />
+      <StatisticLine statName='Bad' stat={props.bad} />
+      <StatisticLine statName='All' stat={props.feedbackTotal} />
+      <StatisticLine statName='Average' stat={props.feedbackAverage} />
+      <StatisticLine statName='Positive' stat={props.positivePercentage + '%'} />
     </div>
+    
   )
 }
-
 
 const App = () => {
   // save clicks of each button to its own state
@@ -32,16 +45,33 @@ const App = () => {
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
   const [allFeedback, setFeedback] = useState([])
+  const [feedbackGiven, setFeedbackGiven] = useState(false)
+
+  const feedbackTotal = good + neutral + bad
+  const feedbackAverage = allFeedback.reduce((a, b) => a + b, 0) / allFeedback.length
+  const positivePercentage = good / (good + neutral + bad) 
+
+  const StatProps = {
+    feedbackGiven: feedbackGiven,
+    good: good,
+    neutral: neutral,
+    bad: bad,
+    feedbackTotal: feedbackTotal,
+    feedbackAverage: feedbackAverage,
+    positivePercentage: positivePercentage
+  }
 
   const goodClick = () => {
     setGood(good + 1)
     setFeedback(allFeedback.concat(1))
+    setFeedbackGiven(true)
     console.log(allFeedback)
   }
   
   const neutralClick = () => {
     setNeutral(neutral + 1)
     setFeedback(allFeedback.concat(0))
+    setFeedbackGiven(true)
     console.log(allFeedback)
 
   }
@@ -49,11 +79,10 @@ const App = () => {
   const badClick = () => {
     setBad(bad + 1)
     setFeedback(allFeedback.concat(-1))
+    setFeedbackGiven(true)
     console.log(allFeedback)
   }
-  const feedbackTotal = good + neutral + bad
-  const feedbackAverage = allFeedback.reduce((a, b) => a + b, 0) / allFeedback.length
-  const positivePercentage = good / (good + neutral + bad) 
+  
 
   return (
     <div>
@@ -65,12 +94,7 @@ const App = () => {
         </div>
         <div>
           <h2>Statistics</h2>
-            <Statistics allFeedback={allFeedback} statName='Good' stat={good} char=''/>
-            <Statistics allFeedback={allFeedback} statName='Neutral' stat={neutral} char=''/>
-            <Statistics allFeedback={allFeedback} statName='Bad' stat={bad} char=''/>
-            <Statistics allFeedback={allFeedback} statName='All' stat={allFeedback} char=''/>
-            <Statistics allFeedback={allFeedback} statName='Average' stat={feedbackAverage} char=''/>
-            <Statistics allFeedback={allFeedback} statName='Positive' stat={positivePercentage} char='%'/>
+            <Statistics {...StatProps}/>
             
         </div>
     </div>
