@@ -12,9 +12,10 @@ const Button = ({ feedbackChange, name}) => {
 
 const StatisticLine = (props) => {
   return (
-    <div>
-      {props.statName} {props.stat}
-    </div>
+      <tr>
+        <td>{props.statName}</td> 
+        <td>{props.stat}</td>
+      </tr>
   )
 }
 
@@ -28,12 +29,18 @@ const Statistics = (props) => {
   } 
   return (
     <div>
-      <StatisticLine statName='Good' stat={props.good} />
-      <StatisticLine statName='Neutral' stat={props.neutral} />
-      <StatisticLine statName='Bad' stat={props.bad} />
-      <StatisticLine statName='All' stat={props.feedbackTotal} />
-      <StatisticLine statName='Average' stat={props.feedbackAverage} />
-      <StatisticLine statName='Positive' stat={props.positivePercentage + '%'} />
+      <table>
+        <tbody> 
+          <StatisticLine statName='Good' stat={props.good} />
+          <StatisticLine statName='Neutral' stat={props.neutral} />
+          <StatisticLine statName='Bad' stat={props.bad} />
+          <StatisticLine statName='All' stat={props.feedbackTotal} />
+          <StatisticLine statName='Average' stat={props.feedbackAverage} />
+          <StatisticLine statName='Positive' stat={props.positivePercentage + '%'} />
+        </tbody>
+       
+      </table>
+      
     </div>
     
   )
@@ -94,7 +101,8 @@ const App = () => {
         </div>
         <div>
           <h2>Statistics</h2>
-            <Statistics {...StatProps}/>
+           
+              <Statistics {...StatProps}/>
             
         </div>
     </div>
