@@ -1,26 +1,40 @@
 import { useState } from 'react'
 
+const Title = ({ title }) => {
+  return (
+    <div>
+      <h2>{title}</h2>
+    </div>
+  )
+}
 
 const Button = ({click, name}) => {
   return (
     <div>
-      <button 
-      onClick={click}>
-      {name}
-      </button>
+      <button onClick={click}> {name} </button>
     </div>
   )
 }
 
-const Anecdote = (props) => {
+const Anecdote = ({ anecdotes, selected }) => {
   return (
     <div>
-      {props.anecdotes[props.selected]} <br></br> + {` has ${props.points[props.selected]} votes`}
+      {anecdotes[selected]}
     </div>
   )
 }
+const MostVotes = ({ points, anecdotes }) => {
+  const highScore = Math.max(...points)
+  const highScoreIndex = points.indexOf(highScore)
+  const leader = anecdotes[highScoreIndex]
 
-
+  return (
+    <div>
+      <p>{leader}</p> has {highScore} votes
+    </div>
+    
+  )
+}
 
 const App = () => {
   const anecdotes = [
@@ -44,17 +58,25 @@ const App = () => {
 }
 
   const voteForAnecdote = () => {
-    const copy = [ ...points ]
-    copy[selected] += 1
-    setPoints(copy)
-    console.log(copy)
+    const pointsCopy = [ ...points ]
+    pointsCopy[selected] += 1
+    setPoints(pointsCopy)
+    console.log(pointsCopy)
+    console.log(points)
   }
 
   return (
     <div>
-      {anecdotes[selected]} <br></br> {` has ${points[selected]} votes`}
-      <Button click={voteForAnecdote} name='Vote' />
-      <Button click={randomiseSelected} name='Next Anecdote' />
+      <>
+        <Title title='Anecdote of the Day'/>
+        <Anecdote anecdotes={anecdotes} selected ={selected}/>
+        <Button click={voteForAnecdote} name='Vote' />
+        <Button click={randomiseSelected} name='Next Anecdote' />
+      </>
+      <>
+        <Title title= 'Anecdote with the most votes' />
+        <MostVotes anecdotes={anecdotes} points={points}/>
+      </>
     </div>
   )
 }
