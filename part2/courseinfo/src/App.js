@@ -21,26 +21,15 @@ const Total = ({ sum }) =>
 </>
 
 
-
-//Total sum={parts[0].exercises + parts[1].exercises + parts[2].exercises}
-
-
-
 const Course = ({course}) => {
 
-  const addExercises = (course) => {
-    let sum = 0
-    for (let i = 0; i < course.parts.length; i++) {
-      sum += course.parts[i].exercises
-    }
-    return sum
-  }
+  const sum = course.parts.reduce((a, b) => a + b.exercises, 0)
 
   return (
     <div>
       <Header name={course.name} />
       <Content parts={course.parts}/>
-      <Total sum={addExercises(course)} />
+      <Total sum={sum} />
     </div>
   )
 }
