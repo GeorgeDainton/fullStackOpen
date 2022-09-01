@@ -1,15 +1,21 @@
 import { useState } from 'react'
 import Person from './components/Person'
 
-const App = (props) => {
+const App = () => {
 
-  const [persons, setPersons] = useState(props.persons)
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas',
+      number: '040-1234567',
+    }
+  ]) 
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
 
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
       name: newName,
+      number: newNumber,
     }
     for (let i = 0; i < persons.length; i++) {
       if(JSON.stringify(personObject.name) === JSON.stringify(persons[i].name)) {
@@ -18,12 +24,17 @@ const App = (props) => {
       } else {
         setPersons([...persons].concat(personObject))
         setNewName('')
+        setNewNumber('')
       }
     }
   }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
+  }
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
   }
 
 
@@ -33,6 +44,7 @@ const App = (props) => {
       <form onSubmit={addPerson}>
         <div>
           name: <input onChange={handleNameChange} />
+          number: <input onChange={handleNumberChange} />
         </div>
         <div>
           <button type="submit">Add</button>
@@ -44,9 +56,6 @@ const App = (props) => {
         )}
     </div>
   )
-
-
-
 }
 
 export default App;
