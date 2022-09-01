@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Number from './components/Number'
+import Person from './components/Person'
 
 const App = (props) => {
 
@@ -9,12 +9,17 @@ const App = (props) => {
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
-      id: persons.length + 1,
       name: newName,
     }
-
-    setPersons(persons.concat(personObject))
-    setNewName('')
+    for (let i = 0; i < persons.length; i++) {
+      if(JSON.stringify(personObject.name) === JSON.stringify(persons[i].name)) {
+        alert(`${personObject.name} is already added to the phonebook`)
+        break
+      } else {
+        setPersons([...persons].concat(personObject))
+        setNewName('')
+      }
+    }
   }
 
   const handleNameChange = (event) => {
@@ -35,7 +40,7 @@ const App = (props) => {
       </form>
       <h2>Numbers</h2>
         {persons.map(person => 
-          <Number key={person.id} person={person}/>
+          <Person key={person.name} person={person}/>
         )}
     </div>
   )
