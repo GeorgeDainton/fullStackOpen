@@ -43,6 +43,14 @@ const App = () => {
           event.target.reset();
         })
       }}
+  
+  const deletePerson = (id) => {
+    const personToBeDeleted = persons.filter(person => person.id === id)
+    if (window.confirm(`Delete ${personToBeDeleted[0].name} ?`)) {
+      axios.delete(`http://localhost:3001/persons/${id}`)
+      setPersons(persons.filter(person => person.id !== personToBeDeleted[0].id))
+    }
+  }
      
 
   const filteredNames = persons.filter(person => {
@@ -80,7 +88,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
         {filteredNames.map(person => 
-          <Person key={person.name} person={person}/>
+          <Person key={person.name} person={person} deletePerson={deletePerson}/>
         )}
     </div>
   )
