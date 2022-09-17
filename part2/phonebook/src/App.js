@@ -4,9 +4,13 @@ import Person from './components/Person'
 import Filter from './components/Filter'
 import New from './components/New'
 
+
 const App = () => {
 
   const [persons, setPersons] = useState([])
+  const names = persons.map(person => {
+    return person.name.toLocaleLowerCase()
+  })
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
@@ -27,17 +31,19 @@ const App = () => {
       name: newName,
       number: newNumber,
     }
-    for (let i = 0; i < persons.length; i++) {
-      if(JSON.stringify(personObject.name) === JSON.stringify(persons[i].name)) {
-        alert(`${personObject.name} is already added to the phonebook`)
-        break
-      } else {
-        setPersons([...persons].concat(personObject))
-      }
-      setNewName('')
-      setNewNumber('')
-    }
-  }
+    if (names.includes(personObject.name.toLocaleLowerCase())) {
+    alert(`${personObject.name} is already added to the phonebook`)
+    } else if (newName === '') {
+    alert('Name field empty')
+    } else {
+      axios.post('http://localhost:3001/persons', personObject)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNewName('')
+          event.target.reset();
+        })
+      }}
+     
 
   const filteredNames = persons.filter(person => {
       return person.name.toLocaleLowerCase().includes(nameFilter.toLocaleLowerCase())
