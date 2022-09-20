@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personServices from './services/persons'
 import Person from './components/Person'
 import Filter from './components/Filter'
 import New from './components/New'
@@ -8,47 +8,79 @@ import New from './components/New'
 const App = () => {
 
   const [persons, setPersons] = useState([])
-  const names = persons.map(person => {
-    return person.name.toLocaleLowerCase()
-  })
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
 
+  const resetState = async () => {
+    await setNewName('')
+    await setNewNumber('')
+  }
+
   useEffect(() => {
-    console.log('Start effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('Promise fulfilled');
-        setPersons(response.data)
+    personServices
+      .getAll()
+      .then(personList => {
+        setPersons(personList)
       })
   }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
-    const personObject = {
-      name: newName,
-      number: newNumber,
-    }
-    if (names.includes(personObject.name.toLocaleLowerCase())) {
-    alert(`${personObject.name} is already added to the phonebook`)
-    } else if (newName === '') {
-    alert('Name field empty')
-    } else {
-      axios.post('http://localhost:3001/persons', personObject)
-        .then(response => {
-          setPersons(persons.concat(response.data))
-          setNewName('')
-          event.target.reset();
-        })
-      }}
+    
+    const matchingEntry = persons.filter((person) => person.name === newName) 
+    console.log('matching entry', matchingEntry[0])
+    // find if there is a prexisting record in the persons list with the same name as the new entry
+    
+    const personToUpdate = matchingEntry[0]
+    console.log('person to update', personToUpdate)
+    // assign matching entry to new variable to remove use of [0], index notation from here on creates problems
+    
+    const updatedPerson = { ...personToUpdate, number: newNumber }
+    console.log('updated person', updatedPerson)
+    // save existing attributes (state) of personToUpdate to the new updatedPerson, albeit with an updated number taken from the user input newNumber
+
+  if (newName.length === 0 || newNumber.length === 0) {
+    alert('Missing field(s)')
+    resetState();
+    event.target.reset();
+    
+  if (matchingEntry.length !== 0 && personToUpdate.number !== newNumber) {
+      if (window.confirm(`${personToUpdate.name} is already added to the phonebook, replace the old number with a new one?`)) {
+      personServices
+          .update(personToUpdate.id, updatedPerson)
+          .then(updatedPersonResponse => {
+            console.log(updatedPersonResponse)
+            setPersons(persons.map(entry => entry.id === updatedPerson.id ? updatedPersonResponse : entry))
+            resetState();
+            event.target.reset();
+          })}
+  
+  } else if (matchingEntry.length !== 0 && personToUpdate.number === newNumber) {
+      alert(`${personToUpdate.name} and ${personToUpdate.number} already in phonebook`)
+      resetState();
+      event.target.reset();
+  
+  } else {
+      const newPerson = {
+        name: newName,
+        number: newNumber
+      }
+        personServices
+          .add(newPerson)
+          .then(newPersonData => {
+            setPersons(persons.concat(newPersonData))
+            resetState();
+            event.target.reset();
+      })
+    }}
   
   const deletePerson = (id) => {
     const personToBeDeleted = persons.filter(person => person.id === id)
     if (window.confirm(`Delete ${personToBeDeleted[0].name} ?`)) {
-      axios.delete(`http://localhost:3001/persons/${id}`)
-      setPersons(persons.filter(person => person.id !== personToBeDeleted[0].id))
+      personServices
+        .remove(id)
+        setPersons(persons.filter(person => person.id !== personToBeDeleted[0].id))
     }
   }
      
@@ -88,7 +120,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
         {filteredNames.map(person => 
-          <Person key={person.name} person={person} deletePerson={deletePerson}/>
+          <Person key={person.id} person={person} deletePerson={deletePerson}/>
         )}
     </div>
   )
