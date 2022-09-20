@@ -45,7 +45,7 @@ const App = () => {
     resetState();
     event.target.reset();
     
-  if (matchingEntry.length !== 0 && personToUpdate.number !== newNumber) {
+  } else if (matchingEntry.length !== 0 && personToUpdate.number !== newNumber) {
       if (window.confirm(`${personToUpdate.name} is already added to the phonebook, replace the old number with a new one?`)) {
       personServices
           .update(personToUpdate.id, updatedPerson)
