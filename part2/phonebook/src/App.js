@@ -12,7 +12,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
-  const [successMessage, setSuccessMessage] = useState(null)
+  const [message, setMessage] = useState(null)
+  
 
   const resetState = async () => {
     await setNewName('')
@@ -56,13 +57,26 @@ const App = () => {
             setPersons(persons.map(entry => entry.id === updatedPerson.id ? updatedPersonResponse : entry))
             resetState();
             event.target.reset();
-            setSuccessMessage(
+            setMessage(
               `Changed number for ${updatedPerson.name}`
             )
             setTimeout(() => {
-              setSuccessMessage(null)
+              setMessage(null)
             }, 5000)
-          })}
+          })
+          .catch(error => {
+            console.log(error)
+            setPersons(persons.filter(person => person.id !== updatedPerson.id))
+            resetState()
+            event.target.reset()
+            setMessage(
+              `Information of ${updatedPerson.name} has already been removed from the server`
+            )
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)  
+            })
+        }
   
   } else if (matchingEntry.length !== 0 && personToUpdate.number === newNumber) {
       alert(`${personToUpdate.name} and ${personToUpdate.number} already in phonebook`)
@@ -80,11 +94,11 @@ const App = () => {
             setPersons(persons.concat(newPersonData))
             resetState();
             event.target.reset();
-            setSuccessMessage(
+            setMessage(
               `Added ${newPerson.name}`
             )
             setTimeout(() => {
-              setSuccessMessage(null)
+              setMessage(null)
             }, 5000)
       })
     }}
@@ -94,7 +108,11 @@ const App = () => {
     if (window.confirm(`Delete ${personToBeDeleted[0].name} ?`)) {
       personServices
         .remove(id)
-        setPersons(persons.filter(person => person.id !== personToBeDeleted[0].id))
+        (setPersons(persons.filter(person => person.id !== personToBeDeleted[0].id)))
+          .then(response => {
+            console.log(response)
+        })
+          
     }
   }
      
@@ -118,7 +136,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage} />
+      <Notification message={message} />
       <form>
         <div>
            <Filter handleNameSearch={handleNameSearch} />
