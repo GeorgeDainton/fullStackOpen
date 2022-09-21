@@ -3,6 +3,7 @@ import personServices from './services/persons'
 import Person from './components/Person'
 import Filter from './components/Filter'
 import New from './components/New'
+import Notification from './components/Notification'
 
 
 const App = () => {
@@ -11,6 +12,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
 
   const resetState = async () => {
     await setNewName('')
@@ -54,6 +56,12 @@ const App = () => {
             setPersons(persons.map(entry => entry.id === updatedPerson.id ? updatedPersonResponse : entry))
             resetState();
             event.target.reset();
+            setSuccessMessage(
+              `Changed number for ${updatedPerson.name}`
+            )
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 5000)
           })}
   
   } else if (matchingEntry.length !== 0 && personToUpdate.number === newNumber) {
@@ -72,6 +80,12 @@ const App = () => {
             setPersons(persons.concat(newPersonData))
             resetState();
             event.target.reset();
+            setSuccessMessage(
+              `Added ${newPerson.name}`
+            )
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 5000)
       })
     }}
   
@@ -104,6 +118,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} />
       <form>
         <div>
            <Filter handleNameSearch={handleNameSearch} />
